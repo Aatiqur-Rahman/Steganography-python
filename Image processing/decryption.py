@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import int_to_bin
 import bin_to_int
+import Insert_using_cv2
 
 bin_data_list = list() # for store binary bit 
 int_data_list = list() # for store conrrespinding integer of binary 
@@ -27,14 +28,21 @@ def red_pixel(l,m,n):
     data_bit=bin_pxl[7]
     bin_data_list.append(data_bit)
 
-path1 = "H:\Shaap\Image processing\stinkbug.png" # image path
+path1 = "H:\Shaap\Image processing\stego_image.png" # image path
 img = cv2.imread(path1,1) # Reding image in RGB mode 
 print("____________________ original image _________________________")
-#print(img)
+#print (img)
 print("_____________________Red Pixel _________________________________")
+print()
 img_shape = img.shape
-for l in range (0,img_shape[0]):
-    for m in range(0,img_shape[1]): #img_shape[1]
+length = len(Insert_using_cv2.bin_value_of_msg)*8
+print(length)
+l_range= int(length/img_shape[1])+1
+m_range = img_shape[1]
+for l in range (0,l_range):
+    if (l==l_range-1):
+        m_range=length%img_shape[1]
+    for m in range(0,m_range): #img_shape[1]
         for n in range(0,1): # picking red pixel of image 
             red_pxl_of_img = img[l,m,n]
             bin_of_red_pxl=int_to_bin.method(red_pxl_of_img)
@@ -45,24 +53,20 @@ for l in range (0,img_shape[0]):
                 red_pixel(l,m,n+2)
             
         
-    break
-#print (bin_data_list)
+print (bin_data_list)
+print(len(bin_data_list))
 
-bin_data_list.append(0)
-bin_data_list.append(0)
-bin_data_list.append(0)
-bin_data_list.append(0)
-
-length = len(bin_data_list) # determine the length of the lsit so that easily convert to numpy 2D array 
+length = len(bin_data_list) # determine the length of the list so that easily convert to numpy 2D array 
 bin_data_array=np.array(bin_data_list).reshape(int(length/8),8) # converting the list into numpy 2D  array
 for i in bin_data_array:
     int_of_data = bin_to_int.method(i)
     int_data_list.append(int_of_data)
-print (int_data_list)
+#print (int_data_list)
 print ("______________________________________ int to ascii function call __________________________________________")
 int_to_ascii(int_data_list)
 print("________________________________________ Now its time to print our original message ___________________________")
 for i in msg:
     print(i,end="")
+
 
 
